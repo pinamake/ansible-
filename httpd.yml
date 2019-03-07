@@ -6,3 +6,4 @@
   - name: httpd is installed
     yum: name=httpd state=installed
     yum: name=nmap  state=installed
+    yum: name=htop  state=installed
