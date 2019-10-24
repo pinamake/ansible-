@@ -1,0 +1,14 @@
+---
+  - name: Examples of lineinfile
+    hosts: all
+    tasks:
+      - name: add services
+        lineinfile: 
+          state: present
+          insertafter: EOF
+          dest: /etc/ssh/sshd_config
+          line: "{{ item }}"
+        with_items:
+         - permitRootLogin  No
+         - StrictModes  yes
+         - AllowUsers bn_admin

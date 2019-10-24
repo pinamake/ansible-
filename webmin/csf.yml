@@ -1,0 +1,9 @@
+---
+- name: install csf
+  hosts: all
+  tasks:
+   - name: download packages
+     get_url:
+       url: https://download.configserver.com/csf.tgz   
+       dest:  /usr/local/src
+       mode: '777'

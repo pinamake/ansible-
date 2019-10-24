@@ -1,0 +1,47 @@
+---
+- name: Harding of server
+  hosts: all
+  tasks:
+   - name: stop firewall 
+     service: name=firewalld state=stopped 
+   - name: Install iptables-services
+     yum: name=iptables-services state=installed   
+   - name: start services
+     service: name=iptables  state=started 
+   - name: copy iptable file
+     copy:
+        src: /home/anisble/iptables
+        dest: /etc/sysconfig/
+   - name: Add a line to a file 
+     lineinfile:
+       path: /root/.bashrc
+       line: export HISTTIMEFORMAT="%Y-%m-%d %H:%M:%S"
+
+   - name: Disble and stop postfix
+     service: name=postfix state=stopped  
+
+   - name: Add the user 'johnd' with a specific uid and a primary group of 'admin'
+     user:
+        name: bn_admin
+        comment: John Doe
+
+   - name: add services
+     lineinfile:
+       state: present
+       insertafter: EOF
+       dest: /etc/ssh/sshd_config
+       line: "{{ item }}"
+     with_items:
+        - permitRootLogin  No
+        - StrictModes  yes
+        - AllowUsers bn_admin
+        - HostbasedAuthentication  no
+        - PermitEmptyPasswords  no
+        - X11Forwarding  no
+        - UsePrivilegeSeparation  sandbox
+        - AllowTcpForwarding  yes
+   
+   - name: restart sshd
+     service:
+       name: sshd
+       state: restarted

@@ -1,0 +1,21 @@
+---
+- name: Install web server
+  hosts: all
+  tasks:
+   - name: Install web_server and all packages
+     yum:
+       name: "{{ packages }}"
+     vars:
+       packages:
+         - httpd
+         - git 
+         - nmap       
+   
+   - name: service restart
+     service: 
+        name: httpd 
+        state: restarted 
+
+    
+
+

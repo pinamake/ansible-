@@ -1,0 +1,50 @@
+# sample configuration for iptables service
+# you can edit this manually or use system-config-firewall
+*filter
+:INPUT ACCEPT [0:0]
+:FORWARD ACCEPT [0:0]
+:OUTPUT ACCEPT [0:0]
+-A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+-A INPUT -p icmp -j ACCEPT
+-A INPUT -i lo -j ACCEPT
+# Balasai Office IPs
+-A INPUT -s 115.108.33.7 -j ACCEPT
+-A INPUT -s 115.108.42.134 -j ACCEPT
+-A INPUT -s 122.169.99.109 -j ACCEPT
+
+# Balasai Network Monitoring IP
+-A INPUT -s 203.199.134.8 -j ACCEPT
+
+# Balasai Network Monitoring (Int) IP
+-A INPUT -s 103.228.50.1 -j ACCEPT
+
+#Balasai VSNL IDC(Reserv for laptop)
+-A INPUT -s 203.199.134.2 -j ACCEPT
+
+# Data Center specific rules - enable only the correct ones.
+# Balasai Internal Network - Only for servers at Tata IDC - Pune
+ -A INPUT -s 192.168.1.0/24 -j ACCEPT
+# SoftLayer Internal Network & Balasai VPN - Only for servers at SL IDC - US
+ -A INPUT -s 10.0.0.0/8 -j ACCEPT
+# Balasai Internal Network - Only for servers at CtrlS IDC - Mumbai
+ -A INPUT -s 192.168.100.0/24 -j ACCEPT
+# Balasai Internal Network - Only for servers at TCL IDC - Pune
+ -A INPUT -s 192.168.20.0/24 -j ACCEPT
+# Balasai Internal Network - Only for servers at TCL IDC - Pune
+ -A INPUT -s 192.168.21.0/24 -j ACCEPT
+# Global
+# Service Specific rules - enable the following rules only if and when required.
+# Web Servers - HTTP & HTTPS
+ -A INPUT -p tcp --dport 80 -j ACCEPT
+ -A INPUT -p tcp --dport 443 -j ACCEPT
+# Mail Servers - SMTP & SMTPS
+ -A INPUT -p tcp --dport 25 -j ACCEPT
+ -A INPUT -p tcp --dport 465 -j ACCEPT
+# POP3 Servers - POP3 & POP3S
+ -A INPUT -p tcp --dport 110 -j ACCEPT
+ -A INPUT -p tcp --dport 995 -j ACCEPT
+# End of Service Specific Rules
+ -A INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT
+-A INPUT -j REJECT --reject-with icmp-host-prohibited
+-A FORWARD -j REJECT --reject-with icmp-host-prohibited
+COMMIT

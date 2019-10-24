@@ -1,0 +1,20 @@
+---
+- name: edit webminfile
+  hosts: all
+  tasks:
+   - name: Ensure SELinux is set to enforcing mode
+     replace:
+       path: /etc/webmin/miniserv.conf
+       regexp: '^listen=10000'
+       replace: '#listen=10000'
+   - name: add services
+     lineinfile:
+       state: present
+       insertafter: EOF
+       dest: /etc/webmin/miniserv.conf 
+       line: "{{ item }}"
+     with_items:
+        - BNPL Servers:54554
+        - Customer Servers:54014   
+        
+

@@ -1,0 +1,36 @@
+---
+- name: deny ip6
+  hosts: all
+  tasks: 
+   - name: ip6 disable
+     file:
+        path: /etc/modprobe.d/disable-ipv6.conf
+        state: touch
+        mode: '777'
+   - name: disable ipv6
+     lineinfile:
+       state: present
+       insertafter: EOF
+       dest: /etc/modprobe.d/disable-ipv6.conf
+       line: options ipv6 disable=1
+   - name: diable the ipv6 from ipv6 in sysconfig
+     lineinfile:
+       state: present
+       insertafter: EOF
+       dest: /etc/sysconfig/network
+       line: "{{ item }}"
+     with_items:
+        - NETWORKING_IPV6=no
+        - IPV6INIT=no
+
+   - name: Restart the network
+     service: name=network state=restarted
+   - name: Ensure SELinux is set to enforcing mode
+     lineinfile:
+       path: /etc/selinux/config
+       regexp: '^SELINUX='
+       line: SELINUX=disable
+       
+         
+         
+  

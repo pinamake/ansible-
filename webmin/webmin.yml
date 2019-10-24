@@ -1,0 +1,27 @@
+---
+- name: install webmin
+  hosts: all
+  tasks:
+   - name: Add repository
+     yum_repository:
+        name: webmin
+        description:  YUM repo
+        mirrorlist: https://download.webmin.com/download/yum/mirrorlist
+        #baseurl: https://download.fedoraproject.org/pub/epel/$releasever/$basearch/
+        enabled: yes
+    
+   - name: Import packages
+     shell: rpm --import http://www.webmin.com/jcameron-key.asc
+ 
+   - name: Install webmin
+     yum: name=webmin state=installed
+
+   - name: add to firewall
+     command:  firewall-cmd --set-default-zone=public
+
+   - name: allow the port
+     command: firewall-cmd --zone=public --add-port=10000/tcp --permanent
+
+   - name: Bounce firewalld
+     service: name=firewalld state=restarted
+

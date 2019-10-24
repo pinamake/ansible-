@@ -1,0 +1,10 @@
+---
+- name: make alias
+  hosts: all
+  tasks: 
+   - name: add services
+     lineinfile:
+       state: present
+       insertafter: EOF
+       dest: /etc/aliases
+       line: root:l2support@balasai.com
