@@ -2,10 +2,6 @@
 - name: Tool install
   hosts: all
   tasks:
-    - name: Install yum utils
-      yum:
-        name:
-        - yum-utils
-        - "@Development tools"
-        lock_timeout: 180
+    - name: yum update
+      yum: name='*' state=latest
 

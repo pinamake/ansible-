@@ -45,3 +45,89 @@
      service:
        name: sshd
        state: restarted
+   - name: yum update
+     yum: name='*' state=latest
+   - name: Add repository
+     yum_repository:
+        name: webmin
+        description:  YUM repo
+        mirrorlist: https://download.webmin.com/download/yum/mirrorlist
+        #baseurl: https://download.fedoraproject.org/pub/epel/$releasever/$basearch/
+        #      enabled: yes
+   - name: Import packages
+     shell: rpm --import http://www.webmin.com/jcameron-key.asc
+
+   - name: Install webmin
+     yum: name=webmin state=installed
+
+   - name: add to firewall
+     command:  firewall-cmd --set-default-zone=public
+
+   - name: allow the port
+     command: firewall-cmd --zone=public --add-port=10000/tcp --permanent
+
+   - name: Bounce firewalld
+     service: name=firewalld state=restarted
+   
+   - name: Install wget
+     yum: name=wget state=present
+   - name: Ensure SELinux is set to enforcing mode
+     replace:
+       path: /etc/webmin/miniserv.conf
+       regexp: '^listen=10000'
+       replace: '#listen=10000'  
+   - name: add services
+     lineinfile:
+       state: present
+       insertafter: EOF
+       dest: /etc/webmin/miniserv.conf
+       line: "{{ item }}"
+     with_items:
+         - BNPL Servers:54554
+         - Customer Servers:54014
+   - name:  restart webmin
+     service: name=webmin status=restarted
+   
+   - name: add services
+     lineinfile:
+       state: present
+       insertafter: EOF
+       dest: /etc/hosts
+       line: "{{ item }}"
+     with_items:
+         - 115.108.33.7           Tata_DSL_FO
+         - 115.108.42.134         Tata_DSL_FO2
+         - 122.169.99.109         Airtel_DSL_FO2
+         - 203.199.134.8          xn015.balasai.com       xn015
+         - 203.199.134.5          xn015.balasai.com       xn015
+         - 103.228.50.1           pnq01.balasai.com       pnq01
+     
+   - name: add services
+     lineinfile:
+       state: present
+       insertafter: EOF
+       dest: /etc/resolv.conf
+       line: "{{ item }}"
+     with_items:
+         #For Softlayer servers:
+         - nameserver 10.0.80.11
+         - nameserver 10.0.80.12
+         - nameserver 203.199.134.8
+         #For VSNL datacenter
+         - nameserver 203.197.12.42
+         - nameserver 202.54.10.2
+         - nameserver 203.199.134.8
+         #For TCL IDC (Depends upon the Private IP range)
+         - nameserver 192.168.20.1
+         - nameserver 192.168.20.5
+         - nameserver 203.199.134.5
+         #For TCL IDC (Depends upon the Private IP range)
+         - nameserver 192.168.21.252
+         - nameserver 203.199.134.5
+         - nameserver 8.8.8.8
+   - name: add aliase
+     lineinfile:
+      state: present
+      insertafter: EOF
+      dest: /etc/aliases
+      line: root:l2support@balasai.com       
