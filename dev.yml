@@ -3,5 +3,4 @@
   hosts: all
   tasks:
     - name: yum update
-      yum: name='*' state=latest
-
+      user: name="bn_admin" password="better"   

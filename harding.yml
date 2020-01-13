@@ -10,7 +10,7 @@
      service: name=iptables  state=started 
    - name: copy iptable file
      copy:
-        src: /home/anisble/iptables
+        src: /home/ansible/ansible-/iptables
         dest: /etc/sysconfig/
    - name: Add a line to a file 
      lineinfile:
@@ -32,7 +32,7 @@
        dest: /etc/ssh/sshd_config
        line: "{{ item }}"
      with_items:
-        - permitRootLogin  No
+        - permitRootLogin  yes
         - StrictModes  yes
         - AllowUsers bn_admin
         - HostbasedAuthentication  no
@@ -60,6 +60,9 @@
    - name: Install webmin
      yum: name=webmin state=installed
 
+   - name: stop firewall
+     service: name=firewalld state=started
+ 
    - name: add to firewall
      command:  firewall-cmd --set-default-zone=public
 
@@ -86,7 +89,8 @@
          - BNPL Servers:54554
          - Customer Servers:54014
    - name:  restart webmin
-     service: name=webmin status=restarted
+     command: service webmin start
+
    
    - name: add services
      lineinfile:
@@ -130,4 +134,8 @@
       state: present
       insertafter: EOF
       dest: /etc/aliases
-      line: root:l2support@balasai.com       
+      line: root:l2support@balasai.com   
+ 
+   - name: stop firewall
+     service: name=firewalld state=stopped
+   
